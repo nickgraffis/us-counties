@@ -1,5 +1,5 @@
 {
-  "name": "us-counties",
+  "name": "@nickgraffis/us-counties",
   "version": "0.0.1",
   "description": "Easily work with US Counties.",
   "main": "index.js",
@@ -12,6 +12,9 @@
     "counties",
     "geography"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "author": "Nick Graffis <hi@nickgraffis.me> (https://github.com/nickgraffis/)",
   "license": "MIT"
 }
