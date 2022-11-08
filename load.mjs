@@ -1,5 +1,15 @@
 import fs from 'fs'
 
+function addSpaces(name) {
+  let returnName = ''
+  for (let i = 0; i < name.length; i++) {
+    if (name[i].toUpperCase() === name[i]) returnName += ' ' + name[i]
+    else returnName += name[i]
+  }
+
+  return returnName.trim()
+}
+
 const counties = []
 let data = fs.readFileSync('./data.text', 'utf8')
 data = data.replace(/\s/g, '')
@@ -21,7 +31,10 @@ data = data.replace(/\s/g, '')
     console.log(FIPS, name, state)
     counties.push({
       FIPS: FIPS?.replace(/<\/tr>/g, '').replace(/<\/td>/g, ''),
-      name: name?.replace(/<\/tr>/g, '').replace(/<\/td>/g, ''),
+      name: (() => {
+        let nm = name?.replace(/<\/tr>/g, '').replace(/<\/td>/g, '')
+        if (nm) return addSpaces(nm)
+      })(),
       state: state?.replace(/<\/tr>/g, '').replace(/<\/td>/g, '')
     })
   })
