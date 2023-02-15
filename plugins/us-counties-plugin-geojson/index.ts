@@ -1,39 +1,51 @@
-import USCounties, { USCountiesPlugin } from "../..";
+import { USCountiesPlugin, USCounties } from '../..';
 
 export const plugin: USCountiesPlugin = {
   methods: {
     async polygons() {
-      const typedThis = this as USCounties
+      const typedThis: USCounties<{ geojson: string }> =
+        this;
       let json;
-      //@ts-ignore
-      if (!typedThis.geojsondata) {
-        const polygons = await fetch(`https://raw.githubusercontent.com/nickgraffis/geojson-us-counties/main/counties.json`);
-        json = await polygons.json();
-        //@ts-ignore
-        typedThis.geojsondata = json;
-      }
-      const ret = {
-        type: "FeatureCollection",
-        features: json.features.filter(({ properties: { GEOID }}) => {
-          return typedThis.counties.has(GEOID)
-        }).map((feature: any) => {
-          return {
-            type: "Feature",
-            geometry: feature.geometry,
-            properties: (() => {
-              const props = feature.properties
-              delete props.name
-              delete props.description
-              props.id = props.GEOID
-              return props
-            })()
-          }
-        })
-      }
+      let polygons = {};
+      let polygonPromises: Promise<any>[] = [];
+      typedThis.result.forEach((county, FIPS) => {
+        polygonPromises.push(
+          fetch(
+            `https://raw.githubusercontent.com/nickgraffis/us-counties/main/data/geojson/${FIPS}.geojson`
+          ).then((res) => res.json())
+        );
+      });
 
-      return ret
+      json = await Promise.all(polygonPromises);
+      json.forEach((geojson) => {
+        polygons[geojson.features[0].properties.GEOID] =
+          geojson;
+      });
+
+      const ret = {
+        type: 'FeatureCollection',
+        features: json.features
+          .filter(({ properties: { GEOID } }) => {
+            return typedThis.counties.has(GEOID);
+          })
+          .map((feature: any) => {
+            return {
+              type: 'Feature',
+              geometry: feature.geometry,
+              properties: (() => {
+                const props = feature.properties;
+                delete props.name;
+                delete props.description;
+                props.id = props.GEOID;
+                return props;
+              })(),
+            };
+          }),
+      };
+
+      return ret;
     },
-  }
-}
+  },
+};
 
 export default plugin;

@@ -4,8 +4,11 @@ County-level data for the United States of America, and methods to search, filte
 ## Getting Started
 
 ```bash
-yarn add @nickgraffis/us-counties
+npm install @nickgraffis/us-counties
 ```
+
+💡 _Or with yarn, pnpm, etc._
+
 ### Basic Useage
 
 ```ts
@@ -121,8 +124,17 @@ const countiesInCalifornia = counties.contains('CA', 'state'); // Counties insta
 ```
 :::
 
+#### `keyBy(key: string)`
+Returns a new `Counties` instance with the counties keyed by the given key. This is useful for grouping counties by a key.
+
+:::details Example
+```ts
+const countiesByState = counties.keyBy('state'); // Counties instance
+```
+:::
+
 #### `groupBy(key: string)`
-Returns a new `Counties` instance for each group of counties that have the same value for the given key. To access the groups, you can use the `groups` method.
+Creates a new `Counties` instance for each group of counties that have the same value for the given key. To access the groups, you can use the `groups` method.
 
 #### `group(key: string)`
 Returns the `Counties` instance for the group of counties that have the same value for the given key.
@@ -134,6 +146,26 @@ import { counties } from '@nickgraffis/us-counties';
 const countiesByState = counties.groupBy('state');
 
 const caCounties = countiesByState.group('CA')
+caCounties.contains('San').res()
+// {
+//   '06037': { fips: '06037', name: 'San Francisco', state: 'CA' },
+//   '06075': { fips: '06075', name: 'San Mateo', state: 'CA' },
+//   .........
+// }
+
+```
+:::
+
+### `groups()`
+Returns an array of the `Counties` instances for each group of counties. To access the groups, you can use the `group` method.
+
+:::details Example
+```ts
+import { counties } from '@nickgraffis/us-counties';
+
+const countiesByState = counties.groupBy('state');
+
+const caCounties = countiesByState.groups()[0]
 caCounties.contains('San').res()
 // {
 //   '06037': { fips: '06037', name: 'San Francisco', state: 'CA' },

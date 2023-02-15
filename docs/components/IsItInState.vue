@@ -2,51 +2,48 @@
 import { computed, ref } from 'vue'
 import * as usc from '../../'
 import { State } from '../../dist/src/types';
-let searchTerm = ref('')
 let state = ref('Alabama')
-let open = ref(false)
+let county = ref('06037')
+let indicatorLight = ref('var(--vp-c-red)')
 const states = computed(() => {
   const states = new Map(usc.statesdata as any)
 
   return [...states.values()] as string[]
 })
-const searchCounties = computed(() => {
-  console.log(state.value)
-  const counties = new usc.USCounties().in(state.value as State)
+const allCounties = computed(() => {
+  const counties = new usc.USCounties()
 
-  return counties.contains(searchTerm.value).res()
+  return counties.res()
 });
+
+const isInState = () => {
+  const counties = new usc.USCounties().in(state.value as State)
+  const isIn = counties.has(county.value)
+  console.log(isIn, county.value)
+  indicatorLight.value = isIn ? 'var(--vp-c-green)' : 'var(--vp-c-red)'
+  return isIn
+};
 </script>
 
 <template>
 <div style="display: flex; align-items: center;">
-  <select v-model="state">
+  <select v-model="state" @change="isInState">
     <option v-for="state in states" :key="state">{{ state }}</option>
   </select>
-  <p style="position: relative">
-    <input @blur="(open = !open)" @click="(open = !open)" type="text" id="search" placeholder="Search counties..." v-model="searchTerm">
-    <ul v-if="searchCounties.length && open">
-      <li
-        v-for="county in searchCounties"
-        :key="county[1].name"
-      >
-        {{ county[1].name }}
-      </li>
-    </ul>
-  </p>
+  <select v-model="county" @change="isInState">
+    <option v-for="county in allCounties" :key="county[0]" :value="county[0]">{{ county[1]?.name }}</option>
+  </select>
+  <div class="indicator"></div>
 </div>
 </template>
 
 <style scoped>
-input {
-  padding-left: 12px;
-  padding-right: 12px;
-  padding-top: 6px;
-  padding-bottom: 6px;
-  border-radius: 5px;
-  background-color: var(--vp-c-gray-dark-3);
-  width: 250px;
-  font-size: 12px;
+.indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: v-bind('indicatorLight');
+  margin-left: 10px;
 }
 
 select {

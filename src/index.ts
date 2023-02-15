@@ -1,9 +1,27 @@
-import type { State, StateAbv, County, SerializedCountyData } from './types';
+import type {
+  State,
+  StateAbv,
+  County,
+  SerializedCountyData,
+  WhereOperation,
+} from './types';
 import countiesSerialized from '../data/counties.json' assert { type: 'json' };
 import statesSerialized from '../data/states.json' assert { type: 'json' };
-export const statesdata = statesSerialized as unknown as Record<StateAbv, State>;
-export const countiesdata = countiesSerialized as unknown as Record<string, { n: string; c: string; s: string }>;
-function includes<T extends U, U>(coll: ReadonlyArray<T>, el: U): el is T {
+import { normalizeState } from './utils';
+export { normalizeState } from './utils';
+export const statesdata = statesSerialized as unknown as [
+  StateAbv,
+  State
+];
+export const countiesdata =
+  countiesSerialized as unknown as [
+    string,
+    { n: string; c: string; s: string }
+  ];
+function includes<T extends U, U>(
+  coll: ReadonlyArray<T>,
+  el: U
+): el is T {
   return coll.includes(el as T);
 }
 
@@ -49,17 +67,37 @@ export class USCounties<Data extends {} = {}> {
       return;
     }
 
-    this.#include = include ? (Array.isArray(include) ? include : [include]) : undefined;
-    this.#exclude = exclude ? (Array.isArray(exclude) ? exclude : [exclude]) : undefined;
+    this.#include = include
+      ? Array.isArray(include)
+        ? include
+        : [include]
+      : undefined;
+    this.#exclude = exclude
+      ? Array.isArray(exclude)
+        ? exclude
+        : [exclude]
+      : undefined;
     this.counties = new Map(countiesSerialized as any);
     this.states = new Map(statesSerialized as any);
 
-    (this.counties as unknown as Map<string, SerializedCountyData>).forEach((county: SerializedCountyData, FIPS) => {
+    (
+      this.counties as unknown as Map<
+        string,
+        SerializedCountyData
+      >
+    ).forEach((county: SerializedCountyData, FIPS) => {
       const continueForEach = () => {
         this.counties.set(FIPS, {
-          stateName: this.states.get(county.s as StateAbv) as State,
+          stateName: this.states.get(
+            county.s as StateAbv
+          ) as State,
           stateAbbr: county.s as StateAbv,
-          state: stateFormat === 'abbr' ? (county.s as StateAbv) : (this.states.get(county.s as StateAbv) as State),
+          state:
+            stateFormat === 'abbr'
+              ? (county.s as StateAbv)
+              : (this.states.get(
+                  county.s as StateAbv
+                ) as State),
           name: county.n as string,
           contiguous: county.c === 't',
         } as County<Data>);
@@ -72,15 +110,26 @@ export class USCounties<Data extends {} = {}> {
               this.counties.set(FIPS, {
                 ...this.counties.get(FIPS),
                 ...(keyMap
-                  ? Object.keys(keyMap).reduce((acc, key) => {
-                      if (key in keyMap) {
-                        const innerKey = keyMap[key as keyof { [key: string]: any }] as string;
-                        // @ts-ignore
-                        const innerValue = pluginMap.get(FIPS)?.[key] as any;
-                        (acc as { [key: string]: any })[innerKey] = innerValue;
-                      }
-                      return acc;
-                    }, {})
+                  ? Object.keys(keyMap).reduce(
+                      (acc, key) => {
+                        if (key in keyMap) {
+                          const innerKey = keyMap[
+                            key as keyof {
+                              [key: string]: any;
+                            }
+                          ] as string;
+                          // @ts-ignore
+                          const innerValue = pluginMap.get(
+                            FIPS
+                          )?.[key] as any;
+                          (acc as { [key: string]: any })[
+                            innerKey
+                          ] = innerValue;
+                        }
+                        return acc;
+                      },
+                      {}
+                    )
                   : pluginMap.has(FIPS)
                   ? pluginMap.get(FIPS)
                   : {}),
@@ -91,7 +140,10 @@ export class USCounties<Data extends {} = {}> {
       };
 
       const handleIncludes = () => {
-        if (this.#include && !includes(this.#include, county.s)) {
+        if (
+          this.#include &&
+          !includes(this.#include, county.s)
+        ) {
           this.counties.delete(FIPS);
         } else {
           continueForEach();
@@ -99,7 +151,10 @@ export class USCounties<Data extends {} = {}> {
       };
 
       const handleExcludes = () => {
-        if (this.#exclude && includes(this.#exclude, county.s)) {
+        if (
+          this.#exclude &&
+          includes(this.#exclude, county.s)
+        ) {
           this.counties.delete(FIPS);
         } else {
           continueForEach();
@@ -119,9 +174,14 @@ export class USCounties<Data extends {} = {}> {
       plugins.forEach((plugin) => {
         if (plugin.methods) {
           Object.keys(plugin.methods).forEach((method) => {
-            type MethodType = Omit<Omit<typeof USCounties.prototype, 'length'>, 'groups'>;
+            type MethodType = Omit<
+              Omit<typeof USCounties.prototype, 'length'>,
+              'groups'
+            >;
             if (plugin.methods?.[method]) {
-              USCounties.prototype[method as keyof MethodType] = plugin.methods[method];
+              USCounties.prototype[
+                method as keyof MethodType
+              ] = plugin.methods[method];
             }
           });
         }
@@ -140,9 +200,11 @@ export class USCounties<Data extends {} = {}> {
    * and not an array.
    */
   in(state: State | StateAbv | (State | StateAbv)[]) {
-    const states = Array.isArray(state) ? state : [state];
-
-    return this.#filterBy((county) => includes(states, county.state));
+    let states = Array.isArray(state) ? state : [state];
+    states = states.map((state) => normalizeState(state));
+    return this.#filterBy((county) =>
+      includes(states, county.state)
+    );
   }
 
   /**
@@ -154,12 +216,14 @@ export class USCounties<Data extends {} = {}> {
    * and not an array.
    */
   notIn(state: State | StateAbv | (State | StateAbv)[]) {
-    const states = Array.isArray(state) ? state : [state];
-
-    return this.#filterBy((county) => !includes(states, county.state));
+    let states = Array.isArray(state) ? state : [state];
+    states = states.map((state) => normalizeState(state));
+    return this.#filterBy(
+      (county) => !includes(states, county.state)
+    );
   }
 
-  #filterBy(fn: (county: County<{}>) => boolean) {
+  #filterBy(fn: (county: County<Data>) => boolean) {
     this.#result.forEach((county, key) => {
       if (!fn(county)) {
         this.#result.delete(key);
@@ -178,12 +242,20 @@ export class USCounties<Data extends {} = {}> {
    */
   find(name: string, field?: string) {
     field = field || 'name';
-    return this.#filterBy((county) => county[field as keyof County<{}>] === name);
+    return this.#filterBy((county) => {
+      if (field === 'state') {
+        return (
+          county.state ===
+          normalizeState(name as State | StateAbv)
+        );
+      }
+      return county[field as keyof County<Data>] === name;
+    });
   }
 
-  get(key: string) {
+  get(key: string): County<Data> {
     return {
-      ...this.#result.get(key),
+      ...(this.#result.get(key) as County<Data>),
       [this.#key]: key,
     };
   }
@@ -200,7 +272,7 @@ export class USCounties<Data extends {} = {}> {
     this.#key = key;
     const map = new Map();
     this.#result.forEach((county, FIPS) => {
-      map.set(county[key as keyof County<{}>], {
+      map.set(county[key as keyof County<Data>], {
         ...county,
         FIPS,
       });
@@ -218,56 +290,113 @@ export class USCounties<Data extends {} = {}> {
 
   contains(name: string, field?: string) {
     field = field || 'name';
-    return this.#filterBy((county) => (county[field as keyof County<{}>] as string).includes(name));
+    return this.#filterBy((county) => {
+      if (field === 'state') {
+        return county.state.includes(
+          normalizeState(name as State | StateAbv)
+        );
+      }
+      return (
+        county[
+          field as keyof County<Data>
+        ] as unknown as string
+      ).includes(name);
+    });
   }
 
-  where(key: string, op: string, value: any) {
+  where(key: string, op: WhereOperation, value: any) {
     return this.#filterBy((county) => {
       switch (op) {
         case '===':
-          return county[key as keyof County<{}>] === value;
+          return (
+            county[key as keyof County<Data>] === value
+          );
         case '!==':
-          return county[key as keyof County<{}>] !== value;
+          return (
+            county[key as keyof County<Data>] !== value
+          );
         case '>':
-          return county[key as keyof County<{}>] > value;
+          return county[key as keyof County<Data>] > value;
         case '>=':
-          return county[key as keyof County<{}>] >= value;
+          return county[key as keyof County<Data>] >= value;
         case '<':
-          return county[key as keyof County<{}>] < value;
+          return county[key as keyof County<Data>] < value;
         case '<=':
-          return county[key as keyof County<{}>] <= value;
+          return county[key as keyof County<Data>] <= value;
         case 'in':
-          return Array.isArray(value) ? value.includes(county[key as keyof County<{}>]) : false;
+          return Array.isArray(value)
+            ? value.includes(
+                county[key as keyof County<Data>]
+              )
+            : false;
         case 'notIn':
-          return Array.isArray(value) ? !value.includes(county[key as keyof County<{}>]) : false;
+          return Array.isArray(value)
+            ? !value.includes(
+                county[key as keyof County<Data>]
+              )
+            : false;
         case 'contains':
-          return Array.isArray(county[key as keyof County<{}>])
-            ? (county[key as keyof County<{}>] as string).includes(value)
+          return Array.isArray(
+            county[key as keyof County<Data>]
+          )
+            ? (
+                county[
+                  key as keyof County<Data>
+                ] as unknown as string
+              ).includes(value)
             : false;
         case 'notContains':
-          return Array.isArray(county[key as keyof County<{}>])
-            ? !(county[key as keyof County<{}>] as string).includes(value)
+          return Array.isArray(
+            county[key as keyof County<Data>]
+          )
+            ? !(
+                county[
+                  key as keyof County<Data>
+                ] as unknown as string
+              ).includes(value)
             : false;
         case 'beginsWith':
-          return (county[key as keyof County<{}>] as string).startsWith(value);
+          return (
+            county[
+              key as keyof County<Data>
+            ] as unknown as string
+          ).startsWith(value);
         case 'endsWith':
-          return (county[key as keyof County<{}>] as string).endsWith(value);
+          return (
+            county[
+              key as keyof County<Data>
+            ] as unknown as string
+          ).endsWith(value);
         case 'includes':
-          return (county[key as keyof County<{}>] as string).includes(value);
+          return (
+            county[
+              key as keyof County<Data>
+            ] as unknown as string
+          ).includes(value);
         case 'notIncludes':
-          return !(county[key as keyof County<{}>] as string).includes(value);
+          return !(
+            county[
+              key as keyof County<Data>
+            ] as unknown as string
+          ).includes(value);
         case 'exists':
-          return county[key as keyof County<{}>] !== undefined;
+          return (
+            county[key as keyof County<Data>] !== undefined
+          );
         case 'notExists':
-          return county[key as keyof County<{}>] === undefined;
+          return (
+            county[key as keyof County<Data>] === undefined
+          );
         case 'isTrue':
-          return county[key as keyof County<{}>] === true;
+          return county[key as keyof County<Data>] === true;
         case 'isFalse':
-          return county[key as keyof County<{}>] === false;
+          return (
+            county[key as keyof County<Data>] === false
+          );
         case 'isTruthy':
-          return !!county[key as keyof County<{}>];
+          return !!county[key as keyof County<Data>];
         case 'isFalsy':
-          return !county[key as keyof County<{}>];
+          return !county[key as keyof County<Data>];
         default:
           return false;
       }
@@ -293,9 +422,22 @@ export class USCounties<Data extends {} = {}> {
 
   groupBy(key: string) {
     this.#result.forEach((county, k) => {
-      const group = county[key as keyof County<{}>];
-      if (this.#groups?.[group as keyof {}] && !(this.#groups[group as keyof {}] as Map<string, any>).has(k)) {
-        (this.#groups[group as keyof {}] as Map<string, any>).set(k, county);
+      const group = county[key as keyof County<Data>];
+      if (
+        this.#groups?.[group as keyof {}] &&
+        !(
+          this.#groups[group as keyof {}] as Map<
+            string,
+            any
+          >
+        ).has(k)
+      ) {
+        (
+          this.#groups[group as keyof {}] as Map<
+            string,
+            any
+          >
+        ).set(k, county);
       } else if (!this.#groups?.[group as keyof {}]) {
         const newMap = new USCounties<Data>({
           ...this.#constructorArgs,
@@ -303,7 +445,12 @@ export class USCounties<Data extends {} = {}> {
         });
         // @ts-ignore
         this.#groups[group as keyof {}] = newMap;
-        (this.#groups[group as keyof {}] as Map<string, any>).set(k, county);
+        (
+          this.#groups[group as keyof {}] as Map<
+            string,
+            any
+          >
+        ).set(k, county);
       }
     });
 
@@ -315,29 +462,40 @@ export class USCounties<Data extends {} = {}> {
   }
 
   group(key: string) {
-    return this.#groups[key as keyof {}] as USCounties<Data>;
+    return this.#groups[
+      key as keyof {}
+    ] as USCounties<Data>;
   }
 
   toArray() {
-    return [...this.#result].map(([key, county]) => ({ FIPS: key, ...county }));
+    return [...this.#result].map(([key, county]) => ({
+      FIPS: key,
+      ...county,
+    }));
   }
 }
 
-export const counties = new USCounties();
+export const counties = () => new USCounties();
 
 /** Make sure we stay reverse compatable  */
 export const getCountyByNameIncludes = (name: string) => {
-  return counties.find(name).toArray();
+  return new USCounties()
+    .where('name', 'includes', name)
+    .toArray();
 };
 
 export const getCountyByNameStartsWith = (name: string) => {
-  return counties.where('name', 'beginsWith', name).toArray();
+  return new USCounties()
+    .where('name', 'beginsWith', name)
+    .toArray();
 };
 
 export const getCountyByFips = (fips: string) => {
-  return counties.get(fips);
+  return new USCounties().get(fips);
 };
 
-export const getCountyByState = (state: State | StateAbv) => {
-  return counties.in(state).toArray();
+export const getCountyByState = (
+  state: State | StateAbv
+) => {
+  return new USCounties().in(state).toArray();
 };

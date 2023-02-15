@@ -1,10 +1,11 @@
-import type { State, StateAbv, County } from './types';
-export declare const statesdata: Record<StateAbv, State>;
-export declare const countiesdata: Record<string, {
+import type { State, StateAbv, County, WhereOperation } from './types';
+export { normalizeState } from './utils';
+export declare const statesdata: [StateAbv, State];
+export declare const countiesdata: [string, {
     n: string;
     c: string;
     s: string;
-}>;
+}];
 export type USCountiesPlugin<Data extends {} = {}> = {
     data?: [string, Data][];
     methods?: {
@@ -29,19 +30,13 @@ export declare class USCounties<Data extends {} = {}> {
     in(state: State | StateAbv | (State | StateAbv)[]): this;
     notIn(state: State | StateAbv | (State | StateAbv)[]): this;
     find(name: string, field?: string): this;
-    get(key: string): {
-        name?: string | undefined;
-        stateName?: State | undefined;
-        stateAbbr?: StateAbv | undefined;
-        state?: State | StateAbv | undefined;
-        contiguous?: boolean | undefined;
-    };
+    get(key: string): County<Data>;
     set(key: string, value: any): void;
     has(key: string): boolean;
     keyBy(key: string): this;
     res(max?: number): [string, County<Data>][];
     contains(name: string, field?: string): this;
-    where(key: string, op: string, value: any): this;
+    where(key: string, op: WhereOperation, value: any): this;
     get result(): Map<string, County<Data>>;
     set result(map: Map<string, County<Data>>);
     get length(): number;
@@ -59,7 +54,7 @@ export declare class USCounties<Data extends {} = {}> {
         contiguous: boolean;
     })[];
 }
-export declare const counties: USCounties<{}>;
+export declare const counties: () => USCounties<{}>;
 export declare const getCountyByNameIncludes: (name: string) => ({
     FIPS: string;
 } & {
@@ -79,11 +74,11 @@ export declare const getCountyByNameStartsWith: (name: string) => ({
     contiguous: boolean;
 })[];
 export declare const getCountyByFips: (fips: string) => {
-    name?: string | undefined;
-    stateName?: State | undefined;
-    stateAbbr?: StateAbv | undefined;
-    state?: State | StateAbv | undefined;
-    contiguous?: boolean | undefined;
+    name: string;
+    stateName: State;
+    stateAbbr: StateAbv;
+    state: State | StateAbv;
+    contiguous: boolean;
 };
 export declare const getCountyByState: (state: State | StateAbv) => ({
     FIPS: string;
