@@ -2,19 +2,60 @@
   "name": "@nickgraffis/us-counties",
   "version": "0.0.1",
   "description": "Easily work with US Counties.",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "require": [
+        "./dist/index.cjs"
+      ],
+      "import": [
+        "./dist/index.mjs"
+      ],
+      "default": "./dist/index.js"
+    },
+    "./dist/*": "./dist/*"
+  },
+  "files": [
+    "dist/**/*.js",
+    "dist/**/*.mjs",
+    "dist/**/*.cjs",
+    "dist/*.d.ts"
+  ],
   "scripts": {
+    "build": "NODE_ENV=production vite build && tsc",
     "load": "node load.mjs",
-    "test": "node test.js"
+    "test": "vitest dev",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs"
   },
   "keywords": [
     "us",
+    "united states",
     "counties",
-    "geography"
+    "geography",
+    "maps"
   ],
   "publishConfig": {
     "access": "public"
   },
   "author": "Nick Graffis <hi@nickgraffis.me> (https://github.com/nickgraffis/)",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "@rollup/plugin-typescript": "^10.0.1",
+    "d3": "^7.6.1",
+    "parse-kml": "^1.0.1",
+    "rollup-plugin-license": "^3.0.1",
+    "rollup-plugin-typescript2": "^0.34.1",
+    "spinnies": "^0.5.1",
+    "vite": "^4.0.4",
+    "vitepress": "^1.0.0-alpha.31",
+    "vitest": "^0.25.3",
+    "vue": "^3.2.45",
+    "tslib": "^2.4.1",
+    "typescript": "^4.9.4"
+  }
 }
