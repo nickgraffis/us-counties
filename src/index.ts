@@ -9,6 +9,14 @@ import countiesSerialized from '../data/counties.json' assert { type: 'json' };
 import statesSerialized from '../data/states.json' assert { type: 'json' };
 import { normalizeState } from './utils';
 export { normalizeState } from './utils';
+export type USCountiesAgs<Data = {}> = {
+  include?: State[] | StateAbv[];
+  exclude?: State[] | StateAbv[];
+  stateFormat?: 'abbr' | 'full';
+  contiguousOnly?: boolean;
+  plugins?: USCountiesPlugin[];
+  counties?: Map<string, County<Data>>;
+};
 export const statesdata = statesSerialized as unknown as [
   StateAbv,
   State
@@ -47,14 +55,7 @@ export class USCounties<Data extends {} = {}> {
     stateFormat,
     plugins,
     counties,
-  }: {
-    include?: State[] | StateAbv[];
-    exclude?: State[] | StateAbv[];
-    stateFormat?: 'abbr' | 'full';
-    contiguousOnly?: boolean;
-    plugins?: USCountiesPlugin[];
-    counties?: Map<string, County<Data>>;
-  } = {}) {
+  }: USCountiesAgs<Data> = {}) {
     this.#constructorArgs = {
       include,
       exclude,
@@ -475,7 +476,8 @@ export class USCounties<Data extends {} = {}> {
   }
 }
 
-export const counties = () => new USCounties();
+export const counties = (args?: USCountiesAgs) =>
+  new USCounties(args || {});
 
 /** Make sure we stay reverse compatable  */
 export const getCountyByNameIncludes = (name: string) => {

@@ -26235,7 +26235,7 @@ u = new WeakMap(), S = new WeakMap(), L = new WeakMap(), o = new WeakMap(), A = 
     n(s) || e(this, o).delete(t);
   }), this;
 };
-const F = () => new d(), J = (a) => new d().where("name", "includes", a).toArray(), v = (a) => new d().where("name", "beginsWith", a).toArray(), U = (a) => new d().get(a), x = (a) => new d().in(a).toArray();
+const F = (a) => new d(a || {}), J = (a) => new d().where("name", "includes", a).toArray(), v = (a) => new d().where("name", "beginsWith", a).toArray(), U = (a) => new d().get(a), x = (a) => new d().in(a).toArray();
 export {
   d as USCounties,
   F as counties,

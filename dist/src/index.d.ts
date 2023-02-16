@@ -1,5 +1,13 @@
 import type { State, StateAbv, County, WhereOperation } from './types';
 export { normalizeState } from './utils';
+export type USCountiesAgs<Data = {}> = {
+    include?: State[] | StateAbv[];
+    exclude?: State[] | StateAbv[];
+    stateFormat?: 'abbr' | 'full';
+    contiguousOnly?: boolean;
+    plugins?: USCountiesPlugin[];
+    counties?: Map<string, County<Data>>;
+};
 export declare const statesdata: [StateAbv, State];
 export declare const countiesdata: [string, {
     n: string;
@@ -19,14 +27,7 @@ export declare class USCounties<Data extends {} = {}> {
     #private;
     counties: Map<string, County<Data>>;
     states: Map<StateAbv, State>;
-    constructor({ include, exclude, contiguousOnly, stateFormat, plugins, counties, }?: {
-        include?: State[] | StateAbv[];
-        exclude?: State[] | StateAbv[];
-        stateFormat?: 'abbr' | 'full';
-        contiguousOnly?: boolean;
-        plugins?: USCountiesPlugin[];
-        counties?: Map<string, County<Data>>;
-    });
+    constructor({ include, exclude, contiguousOnly, stateFormat, plugins, counties, }?: USCountiesAgs<Data>);
     in(state: State | StateAbv | (State | StateAbv)[]): this;
     notIn(state: State | StateAbv | (State | StateAbv)[]): this;
     find(name: string, field?: string): this;
@@ -54,7 +55,7 @@ export declare class USCounties<Data extends {} = {}> {
         contiguous: boolean;
     })[];
 }
-export declare const counties: () => USCounties<{}>;
+export declare const counties: (args?: USCountiesAgs) => USCounties<{}>;
 export declare const getCountyByNameIncludes: (name: string) => ({
     FIPS: string;
 } & {
