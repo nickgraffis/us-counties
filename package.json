@@ -1,6 +1,6 @@
 {
   "name": "@nickgraffis/us-counties",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Easily work with US Counties.",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
