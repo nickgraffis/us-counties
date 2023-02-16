@@ -1,8 +1,8 @@
 export default {
   title: 'US Counties',
   description: 'Just playing around.',
+  base: '/us-counties/', //issues with base path
   themeConfig: {
-    base: '/us-counties/', //issues with base path
     siteTitle: 'US Counties',
     logo: '/logo.png',
     nav: [

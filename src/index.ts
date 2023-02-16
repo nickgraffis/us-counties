@@ -242,7 +242,7 @@ export class USCounties<Data extends {} = {}> {
    * @returns
    */
   find(name: string, field?: string) {
-    field = field || 'name';
+    field = (field || 'name').toLowerCase();
     return this.#filterBy((county) => {
       if (field === 'state') {
         return (
@@ -290,7 +290,7 @@ export class USCounties<Data extends {} = {}> {
   }
 
   contains(name: string, field?: string) {
-    field = field || 'name';
+    field = (field || 'name').toLowerCase();
     return this.#filterBy((county) => {
       if (field === 'state') {
         return county.state.includes(
@@ -306,33 +306,45 @@ export class USCounties<Data extends {} = {}> {
   }
 
   where(key: string, op: WhereOperation, value: any) {
+    const strictValue = value;
+    const lc = Array.isArray(value)
+      ? value.map((v) => v.toLowerCase())
+      : value.toLowerCase();
     return this.#filterBy((county) => {
       switch (op) {
         case '===':
           return (
-            county[key as keyof County<Data>] === value
+            county[key as keyof County<Data>] ===
+            strictValue
           );
         case '!==':
           return (
-            county[key as keyof County<Data>] !== value
+            county[key as keyof County<Data>] !==
+            strictValue
           );
         case '>':
-          return county[key as keyof County<Data>] > value;
+          return (
+            county[key as keyof County<Data>] > strictValue
+          );
         case '>=':
-          return county[key as keyof County<Data>] >= value;
+          return (
+            county[key as keyof County<Data>] >= strictValue
+          );
         case '<':
-          return county[key as keyof County<Data>] < value;
+          return (
+            county[key as keyof County<Data>] < strictValue
+          );
         case '<=':
-          return county[key as keyof County<Data>] <= value;
+          return (
+            county[key as keyof County<Data>] <= strictValue
+          );
         case 'in':
-          return Array.isArray(value)
-            ? value.includes(
-                county[key as keyof County<Data>]
-              )
+          return Array.isArray(lc)
+            ? lc.includes(county[key as keyof County<Data>])
             : false;
         case 'notIn':
-          return Array.isArray(value)
-            ? !value.includes(
+          return Array.isArray(lc)
+            ? !lc.includes(
                 county[key as keyof County<Data>]
               )
             : false;
@@ -344,7 +356,7 @@ export class USCounties<Data extends {} = {}> {
                 county[
                   key as keyof County<Data>
                 ] as unknown as string
-              ).includes(value)
+              ).includes(lc)
             : false;
         case 'notContains':
           return Array.isArray(
@@ -354,32 +366,32 @@ export class USCounties<Data extends {} = {}> {
                 county[
                   key as keyof County<Data>
                 ] as unknown as string
-              ).includes(value)
+              ).includes(lc)
             : false;
         case 'beginsWith':
           return (
             county[
               key as keyof County<Data>
             ] as unknown as string
-          ).startsWith(value);
+          ).startsWith(lc);
         case 'endsWith':
           return (
             county[
               key as keyof County<Data>
             ] as unknown as string
-          ).endsWith(value);
+          ).endsWith(lc);
         case 'includes':
           return (
             county[
               key as keyof County<Data>
             ] as unknown as string
-          ).includes(value);
+          ).includes(lc);
         case 'notIncludes':
           return !(
             county[
               key as keyof County<Data>
             ] as unknown as string
-          ).includes(value);
+          ).includes(lc);
         case 'exists':
           return (
             county[key as keyof County<Data>] !== undefined
