@@ -1,13 +1,13 @@
-var y = (a, n, s) => {
-  if (!n.has(a))
+var y = (c, n, s) => {
+  if (!n.has(c))
     throw TypeError("Cannot " + s);
 };
-var e = (a, n, s) => (y(a, n, "read from private field"), s ? s.call(a) : n.get(a)), N = (a, n, s) => {
-  if (n.has(a))
+var e = (c, n, s) => (y(c, n, "read from private field"), s ? s.call(c) : n.get(c)), C = (c, n, s) => {
+  if (n.has(c))
     throw TypeError("Cannot add the same private member more than once");
-  n instanceof WeakSet ? n.add(a) : n.set(a, s);
-}, l = (a, n, s, t) => (y(a, n, "write to private field"), t ? t.call(a, s) : n.set(a, s), s);
-var T = (a, n, s) => (y(a, n, "access private method"), s);
+  n instanceof WeakSet ? n.add(c) : n.set(c, s);
+}, M = (c, n, s, t) => (y(c, n, "write to private field"), t ? t.call(c, s) : n.set(c, s), s);
+var I = (c, n, s) => (y(c, n, "access private method"), s);
 const H = [
   [
     "01001",
@@ -25986,87 +25986,87 @@ const H = [
     "PR",
     "Puerto Rico"
   ]
-], g = (a) => {
+], g = (c) => {
   var n;
-  return a.length === 2 ? a.toUpperCase() : ((n = Y.find(
-    ([s]) => s === a
-  )) == null ? void 0 : n[1]) || a;
+  return c.length === 2 ? c.toUpperCase() : ((n = Y.find(
+    ([s]) => s === c
+  )) == null ? void 0 : n[1]) || c;
 }, Y = w, p = H;
-function k(a, n) {
-  return a.includes(n);
+function k(c, n) {
+  return c.includes(n);
 }
-var u, S, L, o, A, K, C, I;
+var S, d, O, r, N, K, h, L;
 const D = class {
   constructor({
     include: n,
     exclude: s,
     contiguousOnly: t,
-    stateFormat: c,
-    plugins: M,
-    counties: O
+    stateFormat: i,
+    plugins: o,
+    counties: a
   } = {}) {
-    N(this, C);
-    N(this, u, void 0);
-    N(this, S, void 0);
-    N(this, L, void 0);
-    N(this, o, void 0);
-    N(this, A, void 0);
-    N(this, K, void 0);
-    if (l(this, L, "FIPS"), this.counties = /* @__PURE__ */ new Map(), this.states = /* @__PURE__ */ new Map(), l(this, o, /* @__PURE__ */ new Map()), l(this, A, {}), l(this, K, {
+    C(this, h);
+    C(this, S, void 0);
+    C(this, d, void 0);
+    C(this, O, void 0);
+    C(this, r, void 0);
+    C(this, N, void 0);
+    C(this, K, void 0);
+    if (M(this, O, "FIPS"), this.counties = /* @__PURE__ */ new Map(), this.states = /* @__PURE__ */ new Map(), M(this, r, /* @__PURE__ */ new Map()), M(this, N, {}), M(this, K, {
       include: n,
       exclude: s,
       contiguousOnly: t,
-      stateFormat: c,
-      plugins: M
-    }), O) {
-      this.counties = O;
+      stateFormat: i,
+      plugins: o
+    }), a) {
+      this.counties = a;
       return;
     }
-    l(this, u, n ? Array.isArray(n) ? n : [n] : void 0), l(this, S, s ? Array.isArray(s) ? s : [s] : void 0), this.counties = new Map(H), this.states = new Map(w), this.counties.forEach((r, i) => {
-      const h = () => {
-        this.counties.set(i, {
+    M(this, S, n ? Array.isArray(n) ? n : [n] : void 0), M(this, d, s ? Array.isArray(s) ? s : [s] : void 0), this.counties = new Map(H), this.states = new Map(w), this.counties.forEach((l, A) => {
+      const u = () => {
+        this.counties.set(A, {
           stateName: this.states.get(
-            r.s
+            l.s
           ),
-          stateAbbr: r.s,
-          state: c === "abbr" ? r.s : this.states.get(
-            r.s
+          stateAbbr: l.s,
+          state: i === "abbr" ? l.s : this.states.get(
+            l.s
           ),
-          name: r.n,
-          contiguous: r.c === "t"
-        }), M && M.length > 0 && M.forEach((W) => {
+          name: l.n,
+          contiguous: l.c === "t"
+        }), o && o.length > 0 && o.forEach((W) => {
           if (W.data) {
             const P = new Map(W.data), m = (W == null ? void 0 : W.keyMap) || null;
-            this.counties.set(i, {
-              ...this.counties.get(i),
+            this.counties.set(A, {
+              ...this.counties.get(A),
               ...m ? Object.keys(m).reduce(
                 (R, f) => {
                   var G;
                   if (f in m) {
                     const X = m[f], b = (G = P.get(
-                      i
+                      A
                     )) == null ? void 0 : G[f];
                     R[X] = b;
                   }
                   return R;
                 },
                 {}
-              ) : P.has(i) ? P.get(i) : {}
+              ) : P.has(A) ? P.get(A) : {}
             });
           }
         });
       }, V = () => {
-        e(this, u) && !k(e(this, u), r.s) ? this.counties.delete(i) : h();
+        e(this, S) && !k(e(this, S), l.s) ? this.counties.delete(A) : u();
       }, B = () => {
-        e(this, S) && k(e(this, S), r.s) ? this.counties.delete(i) : h();
+        e(this, d) && k(e(this, d), l.s) ? this.counties.delete(A) : u();
       };
-      t ? r.c === "f" ? this.counties.delete(i) : h() : e(this, u) ? V() : e(this, S) ? B() : h();
-    }), M && M.length > 0 && M.forEach((r) => {
-      r.methods && Object.keys(r.methods).forEach((i) => {
-        var h;
-        (h = r.methods) != null && h[i] && (D.prototype[i] = r.methods[i]);
+      t ? l.c === "f" ? this.counties.delete(A) : u() : e(this, S) ? V() : e(this, d) ? B() : u();
+    }), o && o.length > 0 && o.forEach((l) => {
+      l.methods && Object.keys(l.methods).forEach((A) => {
+        var u;
+        (u = l.methods) != null && u[A] && (D.prototype[A] = l.methods[A]);
       });
-    }), l(this, o, this.counties);
+    }), M(this, r, this.counties);
   }
   /**
    * `in` filters the counties map by state
@@ -26078,7 +26078,7 @@ const D = class {
    */
   in(n) {
     let s = Array.isArray(n) ? n : [n];
-    return s = s.map((t) => g(t)), T(this, C, I).call(this, (t) => k(s, t.state));
+    return s = s.map((t) => g(t)), I(this, h, L).call(this, (t) => k(s, t.state));
   }
   /**
    * `notIn` filters the counties map by state
@@ -26090,7 +26090,7 @@ const D = class {
    */
   notIn(n) {
     let s = Array.isArray(n) ? n : [n];
-    return s = s.map((t) => g(t)), T(this, C, I).call(this, (t) => !k(s, t.state));
+    return s = s.map((t) => g(t)), I(this, h, L).call(this, (t) => !k(s, t.state));
   }
   /**
    * `find` filters the counties map by name property
@@ -26101,143 +26101,142 @@ const D = class {
    * @returns
    */
   find(n, s) {
-    return s = s || "name", T(this, C, I).call(this, (t) => s === "state" ? t.state === g(n) : t[s] === n);
+    return s = s || "name", I(this, h, L).call(this, (t) => s === "state" ? t.state === g(n) : t[s] === n);
   }
   get(n) {
     return {
-      ...e(this, o).get(n),
-      [e(this, L)]: n
+      ...e(this, r).get(n),
+      [e(this, O)]: n
     };
   }
   set(n, s) {
-    e(this, o).set(n, s);
+    e(this, r).set(n, s);
   }
   has(n) {
-    return e(this, o).has(n);
+    return e(this, r).has(n);
   }
   keyBy(n) {
-    l(this, L, n);
+    M(this, O, n);
     const s = /* @__PURE__ */ new Map();
-    return e(this, o).forEach((t, c) => {
+    return e(this, r).forEach((t, i) => {
       s.set(t[n], {
         ...t,
-        FIPS: c
+        FIPS: i
       });
-    }), l(this, o, s), this;
+    }), M(this, r, s), this;
   }
   res(n) {
-    return n ? [...e(this, o)].slice(0, n) : [...e(this, o)];
+    return n ? [...e(this, r)].slice(0, n) : [...e(this, r)];
   }
   contains(n, s) {
-    return s = s || "name", T(this, C, I).call(this, (t) => s === "state" ? t.state.includes(
+    return s = s || "name", I(this, h, L).call(this, (t) => s === "state" ? t.state.includes(
       g(n)
-    ) : t[s].includes(n));
+    ) : t[s].toLowerCase().includes(n.toLowerCase()));
   }
   where(n, s, t) {
-    return T(this, C, I).call(this, (c) => {
+    const i = t, o = Array.isArray(t) ? t.map((a) => a.toLowerCase()) : t.toLowerCase();
+    return I(this, h, L).call(this, (a) => {
       switch (s) {
         case "===":
-          return c[n] === t;
+          return a[n] === i;
         case "!==":
-          return c[n] !== t;
+          return a[n] !== i;
         case ">":
-          return c[n] > t;
+          return a[n] > i;
         case ">=":
-          return c[n] >= t;
+          return a[n] >= i;
         case "<":
-          return c[n] < t;
+          return a[n] < i;
         case "<=":
-          return c[n] <= t;
+          return a[n] <= i;
         case "in":
-          return Array.isArray(t) ? t.includes(
-            c[n]
-          ) : !1;
+          return Array.isArray(o) ? o.includes(a[n]) : !1;
         case "notIn":
-          return Array.isArray(t) ? !t.includes(
-            c[n]
+          return Array.isArray(o) ? !o.includes(
+            a[n]
           ) : !1;
         case "contains":
           return Array.isArray(
-            c[n]
-          ) ? c[n].includes(t) : !1;
+            a[n]
+          ) ? a[n].includes(o) : !1;
         case "notContains":
           return Array.isArray(
-            c[n]
-          ) ? !c[n].includes(t) : !1;
+            a[n]
+          ) ? !a[n].includes(o) : !1;
         case "beginsWith":
-          return c[n].startsWith(t);
+          return a[n].startsWith(o);
         case "endsWith":
-          return c[n].endsWith(t);
+          return a[n].endsWith(o);
         case "includes":
-          return c[n].includes(t);
+          return a[n].includes(o);
         case "notIncludes":
-          return !c[n].includes(t);
+          return !a[n].includes(o);
         case "exists":
-          return c[n] !== void 0;
+          return a[n] !== void 0;
         case "notExists":
-          return c[n] === void 0;
+          return a[n] === void 0;
         case "isTrue":
-          return c[n] === !0;
+          return a[n] === !0;
         case "isFalse":
-          return c[n] === !1;
+          return a[n] === !1;
         case "isTruthy":
-          return !!c[n];
+          return !!a[n];
         case "isFalsy":
-          return !c[n];
+          return !a[n];
         default:
           return !1;
       }
     });
   }
   get result() {
-    return e(this, o);
+    return e(this, r);
   }
   set result(n) {
-    l(this, o, n);
+    M(this, r, n);
   }
   get length() {
-    return e(this, o).size;
+    return e(this, r).size;
   }
   reset() {
-    return l(this, o, this.counties), this;
+    return M(this, r, this.counties), this;
   }
   groupBy(n) {
-    return e(this, o).forEach((s, t) => {
-      var M, O;
-      const c = s[n];
-      if ((M = e(this, A)) != null && M[c] && !e(this, A)[c].has(t))
-        e(this, A)[c].set(t, s);
-      else if (!((O = e(this, A)) != null && O[c])) {
-        const r = new D({
+    return e(this, r).forEach((s, t) => {
+      var o, a;
+      const i = s[n];
+      if ((o = e(this, N)) != null && o[i] && !e(this, N)[i].has(t))
+        e(this, N)[i].set(t, s);
+      else if (!((a = e(this, N)) != null && a[i])) {
+        const l = new D({
           ...e(this, K),
           counties: /* @__PURE__ */ new Map([[t, s]])
         });
-        e(this, A)[c] = r, e(this, A)[c].set(t, s);
+        e(this, N)[i] = l, e(this, N)[i].set(t, s);
       }
     }), this;
   }
   get groups() {
-    return e(this, A);
+    return e(this, N);
   }
   group(n) {
-    return e(this, A)[n];
+    return e(this, N)[n];
   }
   toArray() {
-    return [...e(this, o)].map(([n, s]) => ({
+    return [...e(this, r)].map(([n, s]) => ({
       FIPS: n,
       ...s
     }));
   }
 };
-let d = D;
-u = new WeakMap(), S = new WeakMap(), L = new WeakMap(), o = new WeakMap(), A = new WeakMap(), K = new WeakMap(), C = new WeakSet(), I = function(n) {
-  return e(this, o).forEach((s, t) => {
-    n(s) || e(this, o).delete(t);
+let T = D;
+S = new WeakMap(), d = new WeakMap(), O = new WeakMap(), r = new WeakMap(), N = new WeakMap(), K = new WeakMap(), h = new WeakSet(), L = function(n) {
+  return e(this, r).forEach((s, t) => {
+    n(s) || e(this, r).delete(t);
   }), this;
 };
-const F = (a) => new d(a || {}), J = (a) => new d().where("name", "includes", a).toArray(), v = (a) => new d().where("name", "beginsWith", a).toArray(), U = (a) => new d().get(a), x = (a) => new d().in(a).toArray();
+const F = (c) => new T(c || {}), J = (c) => new T().where("name", "includes", c).toArray(), v = (c) => new T().where("name", "beginsWith", c).toArray(), U = (c) => new T().get(c), x = (c) => new T().in(c).toArray();
 export {
-  d as USCounties,
+  T as USCounties,
   F as counties,
   p as countiesdata,
   U as getCountyByFips,

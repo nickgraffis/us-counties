@@ -242,7 +242,7 @@ export class USCounties<Data extends {} = {}> {
    * @returns
    */
   find(name: string, field?: string) {
-    field = (field || 'name').toLowerCase();
+    field = field || 'name';
     return this.#filterBy((county) => {
       if (field === 'state') {
         return (
@@ -290,7 +290,7 @@ export class USCounties<Data extends {} = {}> {
   }
 
   contains(name: string, field?: string) {
-    field = (field || 'name').toLowerCase();
+    field = field || 'name';
     return this.#filterBy((county) => {
       if (field === 'state') {
         return county.state.includes(
@@ -301,7 +301,9 @@ export class USCounties<Data extends {} = {}> {
         county[
           field as keyof County<Data>
         ] as unknown as string
-      ).includes(name);
+      )
+        .toLowerCase()
+        .includes(name.toLowerCase());
     });
   }
 

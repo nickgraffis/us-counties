@@ -21,6 +21,7 @@ describe.concurrent('Test legacy code', () => {
   test('getCountyByNameIncludes', () => {
     const map = getCountyByNameIncludes('San');
     expect(map).toBeInstanceOf(Array);
+    console.log(map.length);
     expect(map.length).toBe(35);
     expect(map[0].name).toBe('Santa Cruz');
   });
@@ -28,6 +29,7 @@ describe.concurrent('Test legacy code', () => {
   test('getcountyByNameStartsWith', () => {
     const map = getCountyByNameStartsWith('Los');
     expect(map).toBeInstanceOf(Array);
+    console.log(map.length);
     expect(map.length).toBe(2);
     expect(map[0].name).toBe('Los Angeles');
   });

@@ -19,6 +19,7 @@
     "./dist/*": "./dist/*"
   },
   "files": [
+    "dist/**/*.ts",
     "dist/**/*.js",
     "dist/**/*.mjs",
     "dist/**/*.cjs",

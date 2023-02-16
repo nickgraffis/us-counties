@@ -4,7 +4,7 @@ export default {
   base: '/us-counties/', //issues with base path
   themeConfig: {
     siteTitle: 'US Counties',
-    logo: '/logo.png',
+    logo: 'logo.png',
     nav: [
       { text: 'Github', link: '' },
       { text: 'Changelog', link: 'https://github.com/...' },
