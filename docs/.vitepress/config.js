@@ -2,7 +2,7 @@ export default {
   title: 'US Counties',
   description: 'Just playing around.',
   themeConfig: {
-    base: '/us-counties/',
+    base: '/us-counties/', //issues with base path
     siteTitle: 'US Counties',
     logo: '/logo.png',
     nav: [
